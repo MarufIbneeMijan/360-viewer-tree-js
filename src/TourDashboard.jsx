@@ -225,7 +225,7 @@ export const TourDashboard = () => {
           
 
             {/* SETTINGS GEAR PIN BUTTON */}
-            <button 
+            {/* <button 
                 onClick={(e) => { 
                     e.stopPropagation(); 
                     setControlsVisible(!controlsVisible); 
@@ -233,7 +233,7 @@ export const TourDashboard = () => {
                 style={uiStyles.menuTrigger}
             >
                 ⚙️
-            </button>
+            </button> */}
 
             {/* 🎛️ SIDEBAR MANAGEMENT CONTROL UNIT DRAWER */}
             <div 
