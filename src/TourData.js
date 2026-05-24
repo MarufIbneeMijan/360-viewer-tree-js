@@ -8,8 +8,8 @@ export const TOUR_DATA = {
             mapX: 45, // Map percentage coordinates
             mapY: 65,
             hotspots: [
-                { text: "Master Bedroom ⏭️", target: "bedroom", yaw: 45, pitch: -2 },
-                { text: "Gourmet Kitchen 🍳", target: "kitchen", yaw: -95, pitch: -5 }
+                { text: "Master Bedroom ⏭️", target: "kitchen", yaw: 45, pitch: -2 },
+                { text: "Bath Room🍳", target: "bedroom", yaw: -95, pitch: -5 }
             ],
             infoTags: [
                 { title: "Hardwood Aesthetics", text: "Imported white oak panels sealed with matte scratch-resistant glaze.", yaw: 10, pitch: -25 }
@@ -29,7 +29,7 @@ export const TOUR_DATA = {
             ]
         },
         kitchen: {
-            title: "Gourmet Kitchen",
+            title: "Bath Room",
             description: "State-of-the-art culinary space equipped with built-in smart appliances.",
             image: "/tour_assets/kitchen.jpg",
             mapX: 20,
