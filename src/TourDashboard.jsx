@@ -10,7 +10,8 @@ import { SmoothHotspot } from './SmoothHotspot';
 import { InfoTag } from './InfoTag';
 import { SmoothFade } from './SmoothFade';
 import { MiniMap } from './MiniMap';
-
+import { MobileZoomController } from './MobileZoomController';
+import { ResponsiveSidebar } from './ResponsiveSidebar';
 // --- 🗺️ SEPARATED TOP VIEW ENGINE ---
 const TopViewController = ({ isTopView }) => {
     const { camera, size } = useThree();
@@ -129,7 +130,7 @@ export const TourDashboard = () => {
                     camera={isTopView ? { position: [0, 700, 0] } : { position: [0, 0, 0.1], fov: fov, near: 0.1, far: 1000 }}
                 >
                     <TopViewController isTopView={isTopView} />
-
+                    <MobileZoomController setFov={setFov} isTopView={isTopView} />
                     <OrbitControls 
                         ref={controlsRef}
                         enableZoom={isTopView} 
@@ -221,6 +222,7 @@ export const TourDashboard = () => {
                     </button>
                 </div>
             )}
+          
 
             {/* SETTINGS GEAR PIN BUTTON */}
             <button 
@@ -244,46 +246,46 @@ export const TourDashboard = () => {
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
                     
                     {/* // 🚀 THE PERMANENT FIX: Swap your Top View toggle button with this codebase: */}
-<button 
-    onClick={() => { 
-        if (isTopView) {
-            // --- CLEAN EXIT PIPELINE ---
-            setIsTopView(false);
-            setFov(75);
-            
-            if (controlsRef.current) {
-                controlsRef.current.reset();
-                controlsRef.current.target.set(0, 0, 0);
-                
-                if (controlsRef.current.object) {
-                    const cam = controlsRef.current.object;
-                    cam.fov = 75;
-                    cam.near = 0.1;
-                    cam.far = 1000;
-                    
-                    // 🚀 THE FIX: Force the global world Up-Vector back to standard tracking axes
-                    cam.up.set(0, 1, 0); 
-                    cam.position.set(0, 0, 0.1);
-                    cam.lookAt(0, 0, 0);
-                    cam.updateProjectionMatrix();
-                }
-            }
-        } else {
-            // --- ENTER PIPELINE ---
-            setIsTopView(true); 
-            setIsCalcMode(false); 
-            setCalcPoints([]); 
-            setCalculatedDistance(null); 
-        }
-    }} 
-    style={{ 
-        ...uiStyles.actionBtn, 
-        border: isTopView ? '1px solid #3b82f6' : '1px solid rgba(255,255,255,0.08)', 
-        background: isTopView ? 'rgba(59,130,246,0.1)' : 'rgba(255,255,255,0.03)' 
-    }}
->
-    {isTopView ? "👁️ Exit Bird's Eye View" : "🗺️ Switch to Top View"}
-</button>
+            <button 
+                onClick={() => { 
+                    if (isTopView) {
+                        // --- CLEAN EXIT PIPELINE ---
+                        setIsTopView(false);
+                        setFov(75);
+                        
+                        if (controlsRef.current) {
+                            controlsRef.current.reset();
+                            controlsRef.current.target.set(0, 0, 0);
+                            
+                            if (controlsRef.current.object) {
+                                const cam = controlsRef.current.object;
+                                cam.fov = 75;
+                                cam.near = 0.1;
+                                cam.far = 1000;
+                                
+                                // 🚀 THE FIX: Force the global world Up-Vector back to standard tracking axes
+                                cam.up.set(0, 1, 0); 
+                                cam.position.set(0, 0, 0.1);
+                                cam.lookAt(0, 0, 0);
+                                cam.updateProjectionMatrix();
+                            }
+                        }
+                    } else {
+                        // --- ENTER PIPELINE ---
+                        setIsTopView(true); 
+                        setIsCalcMode(false); 
+                        setCalcPoints([]); 
+                        setCalculatedDistance(null); 
+                    }
+                }} 
+                style={{ 
+                    ...uiStyles.actionBtn, 
+                    border: isTopView ? '1px solid #3b82f6' : '1px solid rgba(255,255,255,0.08)', 
+                    background: isTopView ? 'rgba(59,130,246,0.1)' : 'rgba(255,255,255,0.03)' 
+                }}
+            >
+                {isTopView ? "👁️ Exit Bird's Eye View" : "🗺️ Switch to Top View"}
+            </button>
 
                     {!isTopView && (
                         <button 
@@ -300,7 +302,21 @@ export const TourDashboard = () => {
                     <MiniMap currentRoomKey={currentRoomKey} rooms={TOUR_DATA.rooms} onNavigate={handleRoomTransition} />
                 </div>
             </div>
+                <ResponsiveSidebar 
+                visible={controlsVisible}
+                setVisible={setControlsVisible}
+                isTopView={isTopView}
+                setIsTopView={setIsTopView}
+                isCalcMode={isCalcMode}
+                setIsCalcMode={setIsCalcMode}
+                handleRecenter={handleRecenter}
+                currentRoomKey={currentRoomKey}
+                rooms={TOUR_DATA.rooms}
+                handleRoomTransition={handleRoomTransition}
+            />
         </div>
+
+        
     );
 };
 
