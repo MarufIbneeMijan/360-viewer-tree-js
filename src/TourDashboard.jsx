@@ -66,15 +66,25 @@ export const TourDashboard = () => {
     }, [isVrMode]);
 
     // Handle Room-to-Room Transitions Natively
+    const [loadingRoomTitle, setLoadingRoomTitle] = useState("");
     const handleRoomTransition = (targetRoomKey) => {
-        if (targetRoomKey === currentRoomKey || isTransitioning) return;
-        setIsTransitioning(true);
+    if (targetRoomKey === currentRoomKey || isTransitioning) return;
+    
+    // Grab the upcoming room's title from your data registry map
+    const nextRoomTitle = TOUR_DATA.rooms[targetRoomKey]?.title || "NEW SPACE";
+    setLoadingRoomTitle(nextRoomTitle);
+    
+    setIsTransitioning(true);
+    
+    setTimeout(() => {
+        setCurrentRoomKey(targetRoomKey);
+        handleRecenter();
+        
         setTimeout(() => {
-            setCurrentRoomKey(targetRoomKey);
-            handleRecenter();
-            setTimeout(() => setIsTransitioning(false), 200);
-        }, 400);
-    };
+            setIsTransitioning(false);
+        }, 300); 
+    }, 450);
+};
 
     const handleWheelZoom = (e) => {
         if (isTopView || isVrMode) return; 
@@ -166,7 +176,7 @@ export const TourDashboard = () => {
 
     return (
         <div style={uiStyles.fullscreenContainer} onClick={() => !isCalcMode && setControlsVisible(false)}>
-            <SmoothFade active={isTransitioning} />
+            <SmoothFade active={isTransitioning} roomTitle={loadingRoomTitle} />
 
             <div onWheel={handleWheelZoom} style={{ ...uiStyles.canvasWrapper, display: isVrMode ? 'flex' : 'block' }}>
                 {/* PRIMARY VIEWING PORTION */}
