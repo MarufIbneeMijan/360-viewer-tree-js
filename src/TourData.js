@@ -5,11 +5,11 @@ export const TOUR_DATA = {
             title: "Luxurious Living Room",
             description: "Spacious layout showcasing premium hardwood floors and custom lighting.",
             image: "/tour_assets/living_room.jpg",
-            mapX: 45, // Map percentage coordinates
+            mapX: 45, 
             mapY: 65,
             hotspots: [
-                { text: "Master Bedroom ⏭️", target: "kitchen", yaw: 45, pitch: -2 },
-                { text: "Bath Room🍳", target: "bedroom", yaw: -95, pitch: -5 }
+                { text: "Master Bedroom ⏭️", target: "bedroom", yaw: 45, pitch: -2 },
+                { text: "Bath Room 🍳", target: "kitchen", yaw: -95, pitch: -5 }
             ],
             infoTags: [
                 { title: "Hardwood Aesthetics", text: "Imported white oak panels sealed with matte scratch-resistant glaze.", yaw: 10, pitch: -25 }
@@ -25,11 +25,11 @@ export const TOUR_DATA = {
                 { text: "Return to Living Room 🏠", target: "living_room", yaw: 180, pitch: 2 }
             ],
             infoTags: [
-                { title: "Smart Glazing Glass", text: "Triple-pane tempered thermal barrier with automatic UV UV filtering opacity presets.", yaw: -45, pitch: 10 }
+                { title: "Smart Glazing Glass", text: "Triple-pane tempered thermal barrier with automatic UV filtering opacity presets.", yaw: -45, pitch: 10 }
             ]
         },
         kitchen: {
-            title: "Bath Room",
+            title: "Bath Room / Kitchen",
             description: "State-of-the-art culinary space equipped with built-in smart appliances.",
             image: "/tour_assets/kitchen.jpg",
             mapX: 20,
