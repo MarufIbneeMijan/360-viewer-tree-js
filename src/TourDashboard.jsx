@@ -11,9 +11,11 @@ import { SmoothFade } from './SmoothFade';
 import { MobileZoomController } from './MobileZoomController';
 import { ResponsiveSidebar } from './ResponsiveSidebar';
 import { NadirLogo } from './NadirLogo';
+
 export const TourDashboard = () => {
     const [currentRoomKey, setCurrentRoomKey] = useState(TOUR_DATA.initial_room);
     const [isTransitioning, setIsTransitioning] = useState(false);
+    const [loadingRoomTitle, setLoadingRoomTitle] = useState("");
     const [controlsVisible, setControlsVisible] = useState(false);
     const [showHudCard, setShowHudCard] = useState(true);
     
@@ -65,26 +67,31 @@ export const TourDashboard = () => {
         };
     }, [isVrMode]);
 
-    // Handle Room-to-Room Transitions Natively
-    const [loadingRoomTitle, setLoadingRoomTitle] = useState("");
+    // 🚀 FIX: Data-Driven Event Lifecycle
     const handleRoomTransition = (targetRoomKey) => {
-    if (targetRoomKey === currentRoomKey || isTransitioning) return;
-    
-    // Grab the upcoming room's title from your data registry map
-    const nextRoomTitle = TOUR_DATA.rooms[targetRoomKey]?.title || "NEW SPACE";
-    setLoadingRoomTitle(nextRoomTitle);
-    
-    setIsTransitioning(true);
-    
-    setTimeout(() => {
-        setCurrentRoomKey(targetRoomKey);
-        handleRecenter();
+        if (targetRoomKey === currentRoomKey || isTransitioning) return;
         
+        // Setup upcoming title parameter instantly
+        const nextRoomTitle = TOUR_DATA.rooms[targetRoomKey]?.title || "NEW SPACE";
+        setLoadingRoomTitle(nextRoomTitle);
+        
+        // 1. Bring up the glass loading screen instantly
+        setIsTransitioning(true);
+        
+        // 2. Safely swap the underlying image key behind the dark layer shield
         setTimeout(() => {
-            setIsTransitioning(false);
-        }, 300); 
-    }, 450);
-};
+            setCurrentRoomKey(targetRoomKey);
+        }, 150);
+    };
+
+    // 🚀 FIX: Fires strictly when the Drei useTexture hook completes compilation on GPU memory
+    const handleAssetLoadComplete = () => {
+        handleRecenter();
+        // Keep the cartoon character walking just long enough for a polished, seamless fadeout
+        setTimeout(() => {
+            setIsTransitioning(false); 
+        }, 250);
+    };
 
     const handleWheelZoom = (e) => {
         if (isTopView || isVrMode) return; 
@@ -176,6 +183,7 @@ export const TourDashboard = () => {
 
     return (
         <div style={uiStyles.fullscreenContainer} onClick={() => !isCalcMode && setControlsVisible(false)}>
+            {/* 🏃‍♂️ The Running Explorer Glassmorphic Loader Overlay */}
             <SmoothFade active={isTransitioning} roomTitle={loadingRoomTitle} />
 
             <div onWheel={handleWheelZoom} style={{ ...uiStyles.canvasWrapper, display: isVrMode ? 'flex' : 'block' }}>
@@ -194,20 +202,27 @@ export const TourDashboard = () => {
                         />
                         <Suspense fallback={null}>
                             <group onClick={(e) => { e.stopPropagation(); if (isCalcMode) handleCanvasClick(e); }}>
-                                <PanoramaSphere imagePath={activeRoom.image} isTopView={isTopView} />
+                                {/* 🚀 FIX: Passed our callback handler to let ThreeJS govern the loading lifecycle */}
+                                <PanoramaSphere 
+                                    imagePath={activeRoom.image} 
+                                    isTopView={isTopView} 
+                                    onTextureLoaded={handleAssetLoadComplete} 
+                                />
                             </group>
 
-                            {!isTopView && !isVrMode && activeRoom.hotspots.map((hs, i) => (
+                            {/* 🚀 FIX: Added '!isTransitioning' guard to ensure interactive entities stay invisible until loading drops */}
+                            {!isTransitioning && !isTopView && !isVrMode && activeRoom.hotspots.map((hs, i) => (
                                 <SmoothHotspot key={`hs-${i}`} yaw={hs.yaw} pitch={hs.pitch} text={hs.text} onClick={() => handleRoomTransition(hs.target)} />
                             ))}
 
-                            {!isTopView && !isVrMode && activeRoom.infoTags?.map((tag, i) => (
+                            {!isTransitioning && !isTopView && !isVrMode && activeRoom.infoTags?.map((tag, i) => (
                                 <InfoTag key={`tag-${i}`} yaw={tag.yaw} pitch={tag.pitch} title={tag.title} text={tag.text} />
                             ))}
+                            
                             {!isTopView && (
                                 <NadirLogo 
-                                    logoPath="/tour_assets/pocketsculpt_logo.png" // Path to your transparent png asset inside the public folder
-                                    radius={7} // Adjust size dynamically to seamlessly match your tripod footprint base
+                                    logoPath="/tour_assets/pocketsculpt_logo.png" 
+                                    radius={7} 
                                 />
                             )}
                         </Suspense>
@@ -227,6 +242,7 @@ export const TourDashboard = () => {
             </div>
 
             {/* 🏠 LOWER ROOM TITLE HUD CARD */}
+            {/* 🚀 FIX: Added '!isTransitioning' constraint to hide the HUD container text panel mid-transition */}
             {!isTransitioning && !isTopView && !isVrMode && (
                 <div style={{ 
                     ...uiStyles.hudCard, 
